@@ -1,0 +1,2 @@
+catalina_home: /usr/share/tomcat7
+conf_path: /etc/tomcat7/tomcat-users.xml

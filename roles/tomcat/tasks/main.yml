@@ -1,0 +1,29 @@
+---
+ - name: Install tomcat7,tomcat-docs, tomcat7-examples
+   apt: pkg={{ item }} state=latest
+   with_items:
+     - tomcat7
+     - tomcat7-admin
+     - tomcat7-docs
+     - tomcat7-examples
+
+ - name: Setting CATALINA_HOME
+   lineinfile: >
+    dest={{ env_file_path }} 
+    regexp='^CATALINA_HOME=.*' 
+    line='CATALINA_HOME={{ catalina_home }}/jre' 
+    insertafter='^PATH.*'
+
+ - name: Setting PATH variable
+   lineinfile: >
+    dest={{ env_file_path }} 
+    state=present 
+    backrefs=yes 
+    regexp='PATH=(["]*)((?!.*?{{ catalina_home }}/bin).*?)(["]*)$' 
+    line="PATH=\1\2:{{ catalina_home }}/bin\3"
+ 
+ - name: Tomcat7 congiration file
+   template:
+    src: tomcat-users.xml
+    dest: "{{ conf_path }}"
+   notify: restart tomcat7
